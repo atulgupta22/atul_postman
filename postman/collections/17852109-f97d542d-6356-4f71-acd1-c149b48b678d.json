@@ -1,0 +1,3596 @@
+{
+	"info": {
+		"_postman_id": "17852109-f97d542d-6356-4f71-acd1-c149b48b678d",
+		"name": "dsa_loan_booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "fresh_loan",
+			"item": [
+				{
+					"name": "login_dashboard",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a986aef7-7bb3-4dd9-8334-b8a22d28813c",
+								"exec": [
+									"// === Validate status ===\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// === Login request specific logic ===\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Save access token from response\r",
+									"if (response?.result?.accessToken) {\r",
+									"    pm.environment.set(\"access_token\", response.result.accessToken);\r",
+									"}\r",
+									"\r",
+									"// === STOP-AT HANDLING ===\r",
+									"const stopAt = pm.environment.get(\"stop_at\");\r",
+									"if (stopAt === pm.info.requestName) {\r",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevents retry logic from executing\r",
+									"}\r",
+									"\r",
+									"// Chain to next request if success\r",
+									"if (pm.response.code === 200) {\r",
+									"    pm.execution.setNextRequest(\"disqualify_parent_leads\");\r",
+									"} else {\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "95397b19-7799-4153-9324-2381e64fc701",
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-b0a26853-fe1b-4387-a7b6-4a1b1323d674",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authority",
+								"value": "dev.indiagiftsgold.com"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Chromium\";v=\"94\", \"Google Chrome\";v=\"94\", \";Not A Brand\";v=\"99\""
+							},
+							{
+								"key": "device-version",
+								"value": "4.3.5"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json;charset=UTF-8"
+							},
+							{
+								"key": "accept",
+								"value": "*"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"Windows\""
+							},
+							{
+								"key": "origin",
+								"value": "https://dev-dash.bestgoldindia.com"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "cross-site"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "referer",
+								"value": "https://dev-dash.bestgoldindia.com/"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{admin_email}}\",\r\n    \"password\": \"{{admin_password}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "disqualify_parent_leads",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3cf020d8-1285-4549-87b3-79df9116a7ee",
+								"exec": [
+									"// === Validate status ===",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// === STOP-AT HANDLING ===",
+									"const stopAt = pm.environment.get(\"stop_at\");",
+									"if (stopAt === pm.info.requestName) {",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);",
+									"    pm.execution.setNextRequest(null);",
+									"    return;   // ✅ Prevents retry logic from executing",
+									"}",
+									"",
+									"// === Request-specific chaining ===",
+									"if (pm.response.code === 200) {",
+									"    pm.execution.setNextRequest(\"disqualify_leads\");",
+									"} else {",
+									"    pm.execution.setNextRequest(null);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a41fd9a6-46c8-40d0-8345-3b5aaadd2b91",
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-eaba141e-49a9-4077-bb8c-e3937cafc193",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://test-lead-service.indiagiftsgold.com/dsa-lead/disqualify-leads?mobile={{customer_mobile_number}}",
+							"protocol": "https",
+							"host": [
+								"test-lead-service",
+								"indiagiftsgold",
+								"com"
+							],
+							"path": [
+								"dsa-lead",
+								"disqualify-leads"
+							],
+							"query": [
+								{
+									"key": "mobile",
+									"value": "{{customer_mobile_number}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "disqualify_leads",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7e7dc1f4-5b41-4992-98ad-543fd251924e",
+								"exec": [
+									"// 1) Validate status",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"// === STOP-AT HANDLING ===",
+									"const stopAt = pm.environment.get(\"stop_at\");",
+									"if (stopAt === pm.info.requestName) {",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);",
+									"    pm.execution.setNextRequest(null);",
+									"    return;   // ✅ Prevents retry logic from executing",
+									"}",
+									"",
+									"// 2) Control flow: on 200 go to next; otherwise stop",
+									"if (pm.response.code === 200) {",
+									"  // Prefer request ID for resilience; name works if stable",
+									"  pm.execution.setNextRequest(\"send_otp_lm_app\");",
+									"} else {",
+									"  pm.execution.setNextRequest(null);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-de45d8b8-01a6-4d86-9ba1-bc9066b33866",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{base_url_java}}/business/qa/disqualify-leads?mobile={{customer_mobile_number}}",
+							"host": [
+								"{{base_url_java}}"
+							],
+							"path": [
+								"business",
+								"qa",
+								"disqualify-leads"
+							],
+							"query": [
+								{
+									"key": "mobile",
+									"value": "{{customer_mobile_number}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send_otp_lm_app",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "71ef7e34-49e1-4247-90d2-611d5a8edb6d",
+								"exec": [
+									"// ==== Safe JSON parse ====\r",
+									"// Handles non-JSON responses gracefully\r",
+									"let response = {};\r",
+									"try {\r",
+									"    response = pm.response.json();\r",
+									"} catch (e) {\r",
+									"    response = {};\r",
+									"}\r",
+									"\r",
+									"// ==== Save otpId if present ====\r",
+									"if (response?.result?.otpId) {\r",
+									"    pm.environment.set(\"lm_otpId\", response.result.otpId);\r",
+									"}\r",
+									"\r",
+									"// === STOP-AT HANDLING ===\r",
+									"const stopAt = pm.environment.get(\"stop_at\");\r",
+									"if (stopAt === pm.info.requestName) {\r",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevents retry logic from executing\r",
+									"}\r",
+									"\r",
+									"// ==== Retry configuration ====\r",
+									"const retryKey = \"send_otp_retry_count\"; // unique retry counter per request\r",
+									"const maxRetries = 2;                    // total attempts = maxRetries + 1\r",
+									"const backoffMs = 1500;                  // optional delay (ms) before retry\r",
+									"let retryCount = parseInt(pm.environment.get(retryKey) || \"0\", 10);\r",
+									"\r",
+									"// ==== Handle OTP_LIMIT_HIT: retry logic ====\r",
+									"if (response?.error?.developerCode === \"OTP_LIMIT_HIT\") {\r",
+									"    if (retryCount < maxRetries) {\r",
+									"        retryCount += 1;\r",
+									"        pm.environment.set(retryKey, String(retryCount));\r",
+									"        console.log(`🔄 Retrying send-otp... Attempt ${retryCount}/${maxRetries}`);\r",
+									"\r",
+									"        // Optional delay hint; Runner/Newman executes next request immediately\r",
+									"        setTimeout(function () { /* no-op for delay */ }, backoffMs);\r",
+									"\r",
+									"        // Retry same request\r",
+									"        pm.execution.setNextRequest(pm.info.requestName);\r",
+									"\r",
+									"    } else {\r",
+									"        console.log(\"❌ Max retries reached for OTP_LIMIT_HIT. Stopping...\");\r",
+									"        pm.environment.unset(retryKey);\r",
+									"        pm.execution.setNextRequest(null); // stop run\r",
+									"    }\r",
+									"\r",
+									"// ==== Success / non-retry path ====\r",
+									"} else {\r",
+									"    // Reset retry counter for other outcomes\r",
+									"    pm.environment.unset(retryKey);\r",
+									"\r",
+									"    // Assert HTTP 200\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									"\r",
+									"    // Flow: on HTTP 200, proceed; otherwise stop\r",
+									"    if (pm.response.code === 200) {\r",
+									"        pm.execution.setNextRequest(\"decrypt_otp_lm_app\");\r",
+									"    } else {\r",
+									"        pm.execution.setNextRequest(null);\r",
+									"    }\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "50a96465-591b-4942-9055-470924ede1f9",
+								"exec": [
+									"const retryKey = \"send_otp_retry_count\";",
+									"let retryCount = parseInt(pm.environment.get(retryKey) || \"0\", 10);",
+									"",
+									"let waitTime = 0;",
+									"if (retryCount === 1) {",
+									"    waitTime = 2000; // 2 sec for first retry",
+									"} else if (retryCount === 2) {",
+									"    waitTime = 35000; // 35 sec for second retry",
+									"}",
+									"",
+									"if (waitTime > 0) {",
+									"    console.log(`Delaying request by ${waitTime/1000} seconds...`);",
+									"    setTimeout(function(){}, waitTime);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-88d75888-abdb-42f8-be0d-8424f31dddb4",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8"
+							},
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "app-version-code",
+								"value": "41"
+							},
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-id",
+								"value": "572e87855ee349d8"
+							},
+							{
+								"key": "device-type",
+								"value": "ANDROID"
+							},
+							{
+								"key": "device-version",
+								"value": "1.41"
+							},
+							{
+								"key": "user-agent",
+								"value": "{\"device_type\":\"ANDROID\",\"device_id\":\"572e87855ee349d8\",\"device_model\":\"Xiaomi  M2006C3MII\",\"device_android_version\":29}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"mobile\":\"{{lm_mobile}}\"}"
+						},
+						"url": {
+							"raw": "{{base_url}}/business/send-otp",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"send-otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "decrypt_otp_lm_app",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d7c938e7-727f-4e37-bbd6-df2710e6564d",
+								"exec": [
+									"// Safe JSON parse\r",
+									"let res = {};\r",
+									"try { res = pm.response.json(); } catch (e) { res = {}; }\r",
+									"\r",
+									"// Persist only what the next step needs (adjust path if needed)\r",
+									"if (res?.result) {\r",
+									"  pm.environment.set(\"lm_otp\", JSON.stringify(res.result));\r",
+									"} else {\r",
+									"  pm.environment.unset(\"lm_otp\");\r",
+									"}\r",
+									"\r",
+									"// Validate HTTP status\r",
+									"pm.test(\"Status code is 200\", () => {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// === STOP-AT HANDLING ===\r",
+									"const stopAt = pm.environment.get(\"stop_at\");\r",
+									"if (stopAt === pm.info.requestName) {\r",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevents retry logic from executing\r",
+									"}\r",
+									"\r",
+									"// Control flow: proceed on 200; otherwise stop\r",
+									"if (pm.response.code === 200) {\r",
+									"  // Prefer request ID for resilience; name works if stable\r",
+									"  pm.execution.setNextRequest(\"verify-otp_lm_app\");\r",
+									"} else {\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "83e898b1-cac9-4ac5-99fe-7122257a3225",
+								"exec": [
+									"setTimeout(function(){}, [2000]);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-7fae10f0-42df-47da-bed7-90d96594dcda",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{base_url_java}}/user/decrypt-otp?otpId={{lm_otpId}}",
+							"host": [
+								"{{base_url_java}}"
+							],
+							"path": [
+								"user",
+								"decrypt-otp"
+							],
+							"query": [
+								{
+									"key": "otpId",
+									"value": "{{lm_otpId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify-otp_lm_app",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5802a526-a81d-4bf5-9e5a-5b19a472b8d0",
+								"exec": [
+									"setTimeout(function(){}, [1000]);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "bb847ac1-7638-4127-9945-af86aaa927e7",
+								"exec": [
+									"// 1) Validate HTTP status\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// === STOP-AT HANDLING ===\r",
+									"const stopAt = pm.environment.get(\"stop_at\");\r",
+									"if (stopAt === pm.info.requestName) {\r",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevents retry logic from executing\r",
+									"}\r",
+									"\r",
+									"// 2) Control flow: on 200 go to login; otherwise stop\r",
+									"if (pm.response.code === 200) {\r",
+									"  // Prefer request ID for resilience; name works if stable\r",
+									"  pm.execution.setNextRequest(\"login_lm_app\");\r",
+									"} else {\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-11964ffc-0bcd-4b13-930c-f520af314760",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8"
+							},
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "app-version-code",
+								"value": "41"
+							},
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-id",
+								"value": "572e87855ee349d8"
+							},
+							{
+								"key": "device-type",
+								"value": "ANDROID"
+							},
+							{
+								"key": "device-version",
+								"value": "1.41"
+							},
+							{
+								"key": "user-agent",
+								"value": "{\"device_type\":\"ANDROID\",\"device_id\":\"572e87855ee349d8\",\"device_model\":\"Xiaomi  M2006C3MII\",\"device_android_version\":29}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"mobile\":\"{{lm_mobile}}\",\"otp\":{{lm_otp}},\"otpId\":{{lm_otpId}}}"
+						},
+						"url": {
+							"raw": "{{base_url}}/business/verify-otp",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"verify-otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login_lm_app",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1a05e5a5-3c05-4a7c-848f-33e80487abac",
+								"exec": [
+									"// ==== Safe JSON Parse ====\r",
+									"// Handles non-JSON responses gracefully\r",
+									"let res = {};\r",
+									"try {\r",
+									"    res = pm.response.json();\r",
+									"} catch (e) {\r",
+									"    res = {};\r",
+									"}\r",
+									"\r",
+									"// ==== Persist tokens if present ====\r",
+									"if (res?.result?.accessToken) {\r",
+									"    pm.environment.set(\"access_token_lm_app\", res.result.accessToken);\r",
+									"} else {\r",
+									"    pm.environment.unset(\"access_token_lm_app\");\r",
+									"}\r",
+									"\r",
+									"if (res?.result?.id) {\r",
+									"    pm.environment.set(\"agent_id\", res.result.id);\r",
+									"} else {\r",
+									"    pm.environment.unset(\"agent_id\");\r",
+									"}\r",
+									"\r",
+									"// ==== Validate HTTP Status ====\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// === STOP-AT HANDLING ===\r",
+									"const stopAt = pm.environment.get(\"stop_at\");\r",
+									"if (stopAt === pm.info.requestName) {\r",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevents retry logic from executing\r",
+									"}\r",
+									"\r",
+									"// ==== Control Flow ====\r",
+									"if (pm.response.code === 200) {\r",
+									"    // Proceed to next request\r",
+									"    pm.execution.setNextRequest(\"start-shift_lm_app\");\r",
+									"} else {\r",
+									"    // Stop collection on non-200 response\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c6f688b1-d927-4d4c-8e8e-6f4c5eae4de0",
+								"exec": [
+									"// Generate an 8-character numeric ID (not between 9–15 chars)",
+									"const hypertrack_device_id = String(Math.floor(10000000 + Math.random() * 90000000));",
+									"",
+									"pm.environment.set(\"hypertrack_device_id\", hypertrack_device_id);",
+									"console.log(\"hypertrack_device_id:\", hypertrack_device_id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-ff6b4b2f-5a1d-4ba3-a717-16309c5afb7f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8"
+							},
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "app-version-code",
+								"value": "41"
+							},
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-id",
+								"value": "572e87855ee349d8"
+							},
+							{
+								"key": "device-type",
+								"value": "ANDROID"
+							},
+							{
+								"key": "device-version",
+								"value": "1.41"
+							},
+							{
+								"key": "user-agent",
+								"value": "{\"device_type\":\"ANDROID\",\"device_id\":\"572e87855ee349d8\",\"device_model\":\"Xiaomi  M2006C3MII\",\"device_android_version\":29}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fcmToken\": \"c7iOmtDrTIuEbvk8jxLws9:APA91bGsz4XcXEqg7eZxDixownQeMA9EP4c-_R5KgJw3Z8MlJTP0CktDUkaYuObc6bPTrHvchE_zmdD-_Mjx-0hsilGoV_l33QBW-boy-CpwHxRk4Ir47uOZAEeZqbJ1u-Axnn0gChIf\",\n    \"hypertrackDeviceId\": \"{{hypertrack_device_id}}\",\n    \"mobile\": \"{{lm_mobile}}\",\n    \"otp\": {{lm_otp}},\n    \"otpId\": {{lm_otpId}}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/business/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "start-shift_lm_app",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "94a2a0d5-3e9f-4050-b746-e6d8a4b66fd4",
+								"exec": [
+									"// 1) Assert HTTP 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// === STOP-AT HANDLING ===\r",
+									"const stopAt = pm.environment.get(\"stop_at\");\r",
+									"if (stopAt === pm.info.requestName) {\r",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevents retry logic from executing\r",
+									"}\r",
+									"\r",
+									"// 2) Flow control: proceed on success; otherwise stop run\r",
+									"if (pm.response.code === 200) {\r",
+									"  pm.execution.setNextRequest(\"create_new_lead\");\r",
+									"} else {\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-9d8f36c9-1e52-4682-a32e-f0852e68f026",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-length": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "app-version-code",
+								"value": "41"
+							},
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-id",
+								"value": "572e87855ee349d8"
+							},
+							{
+								"key": "device-type",
+								"value": "ANDROID"
+							},
+							{
+								"key": "device-version",
+								"value": "1.41"
+							},
+							{
+								"key": "user-agent",
+								"value": "{\"device_type\":\"ANDROID\",\"device_id\":\"572e87855ee349d8\",\"device_model\":\"Xiaomi  M2006C3MII\",\"device_android_version\":29}"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token_lm_app}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/business/start-shift",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"start-shift"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_new_lead",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "31b210ea-b72a-4cc8-9931-b89c069d13ce",
+								"exec": [
+									"// Safe JSON parse\r",
+									"let res = {};\r",
+									"try { res = pm.response.json(); } catch (e) { res = {}; }\r",
+									"\r",
+									"// Persist lead_id if available\r",
+									"if (res?.result?.leadId) {\r",
+									"  pm.environment.set(\"lead_id\", res.result.leadId);\r",
+									"} else {\r",
+									"  pm.environment.unset(\"lead_id\");\r",
+									"}\r",
+									"\r",
+									"// Assert HTTP status\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// 🔴🛑 === STOP-AT CHECK: Halting Collection at This Request ===\r",
+									"if (pm.environment.get(\"stop_at\") === pm.info.requestName) {\r",
+									"    console.warn(`🛑 STOP-AT TRIGGERED → Execution halted at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevent further processing\r",
+									"}\r",
+									"\r",
+									"// Flow control: proceed on 200; otherwise stop\r",
+									"if (pm.response.code === 200) {\r",
+									"  // Prefer request ID for resilience if names may change\r",
+									"  pm.execution.setNextRequest(\"schedule_lead\");\r",
+									"} else {\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-34c13843-8937-4b1b-b96a-5ffe4d951d27",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-version",
+								"value": "1.41"
+							},
+							{
+								"key": "app-version-code",
+								"value": "41"
+							},
+							{
+								"key": "device-id",
+								"value": "572e87855ee349d8"
+							},
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "device-udid",
+								"value": ""
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token_lm_app}}"
+							},
+							{
+								"key": "device-type",
+								"value": "ANDROID"
+							},
+							{
+								"key": "user-agent",
+								"value": "{\"device_type\":\"ANDROID\",\"device_id\":\"572e87855ee349d8\",\"device_model\":\"Xiaomi  M2006C3MII\",\"device_android_version\":29}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"CREATOR\": {},\n    \"city\": \"DELHI\",\n    \"firstName\": \"Atul\",\n    \"gender\": \"FEMALE\",\n    \"goldLoanType\": \"FRESH\",\n    \"lastName\": \"Gupta\",\n    \"loanAmount\": {{loan_requested_amount}},\n    \"mobile\": \"{{customer_mobile_number}}\",\n    \"pincode\": \"110001\",\n    \"utmDetail\": \"khushbu.patel 1@indiagold.co\",\n    \"utmSource\": \"Emp Referral LM\",\n    \"utmTerm\": \"khushbu.patel 1@indiagold.co\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/business/lead/request",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"lead",
+								"request"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST -H \"device-env: debug\" -H \"device-version: 6.10\" -H \"app-version-code: 510\" -H \"device-id: f75419f41629a67f\" -H \"accept-language: en\" -H \"device-udid: \" -H \"x-access-token: eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6Mjg4LFwibW9iaWxlXCI6XCI5MDk5OTYxNzk3XCIsXCJlbWFpbFwiOlwia2h1c2hidS5wYXRlbCsxQGluZGlhZ29sZC5jb1wiLFwiY3JlYXRlZEF0XCI6MTY0NTU5MjIxNDI4OCxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJMT0FOX01BTkFHRVJcIixcIlJFTEVBU0VfTUFOQUdFUlwiXX0iLCJpYXQiOjE3NTY3MTg1OTQsImV4cCI6MTc1NjcyOTM5NH0.DJXbafyb2vo2WGorP8eyAnHsn7WjsizRocs7zH9z4KhWKMgF_3x-A-nh8844EFk9U7rASoO9CMp3qW6o2Psh4w\" -H \"device-type: **\" -H \"user-agent: **\" --data $'{\"CREATOR\":{},\"city\":\"DELHI\",\"firstName\":\"khushboo\",\"gender\":\"FEMALE\",\"goldLoanType\":\"FRESH\",\"lastName\":\"PATEL\",\"loanAmount\":100000,\"mobile\":\"9099961797\",\"pincode\":\"110001\",\"utmDetail\":\"khushbu.patel+1@indiagold.co\",\"utmSource\":\"Emp Referral LM\",\"utmTerm\":\"khushbu.patel+1@indiagold.co\"}' --compressed https://fs2.indiagiftsgold.com/business/lead/request"
+					},
+					"response": []
+				},
+				{
+					"name": "schedule_lead",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "b4b48201-e676-48c0-80e6-3a935b63288c",
+								"exec": [
+									"var moment = require('moment');\r",
+									"\r",
+									"",
+									"var futureDate = moment().add(1, 'days').set({ hour: 12, minute: 30, second: 0, millisecond: 0 });\r",
+									"pm.environment.set(\"future_date\", futureDate.format('YYYY-MM-DD'));\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "23f85eac-4eb5-4b23-935c-121cd22eb394",
+								"exec": [
+									"// 1) Assert HTTP 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// 🔴🛑 === STOP-AT CHECK: Halting Collection at This Request ===\r",
+									"if (pm.environment.get(\"stop_at\") === pm.info.requestName) {\r",
+									"    console.warn(`🛑 STOP-AT TRIGGERED → Execution halted at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevent further processing\r",
+									"}\r",
+									"\r",
+									"// 2) Flow control: proceed on success; otherwise stop\r",
+									"if (pm.response.code === 200) {\r",
+									"  // Use request ID for resilience if names may change:\r",
+									"  pm.execution.setNextRequest(\"get_scheduled_lead\");\r",
+									"} else {\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-6d0595fe-35e5-40d3-90c3-0b2ae46e84a1",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-version",
+								"value": "6.10"
+							},
+							{
+								"key": "app-version-code",
+								"value": "510"
+							},
+							{
+								"key": "device-id",
+								"value": "f75419f41629a67f"
+							},
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "device-udid",
+								"value": ""
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token_lm_app}}"
+							},
+							{
+								"key": "device-type",
+								"value": "**"
+							},
+							{
+								"key": "user-agent",
+								"value": "**"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"CREATOR\": {},\n    \"customerAddress\": \"Karol bagh\",\n    \"dsaLenderEnumName\": \"{{lender_name}}\",\n    \"firstMeetingNote\": \"\",\n     \"googleLatitude\": 28.5154422,\n    \"googleLongitude\": 77.3502362,\n    \"isParentLead\": true,\n    \"landmark\": \"om corner\",\n    \"leadId\": {{lead_id}},\n    \"panNumber\": \"BABPG1822M\",\n    \"scheduledMeetingDate\": \"{{future_date}}\",\n    \"scheduledMeetingTimeSlot\": \"17:00-19:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/lead/credit-report/schedule",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"lead",
+								"credit-report",
+								"schedule"
+							]
+						},
+						"description": "Generated from cURL: curl -X PUT -H \"device-env: debug\" -H \"device-version: 6.10\" -H \"app-version-code: 510\" -H \"device-id: f75419f41629a67f\" -H \"accept-language: en\" -H \"device-udid: \" -H \"x-access-token: eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6Mjg4LFwibW9iaWxlXCI6XCI5MDk5OTYxNzk3XCIsXCJlbWFpbFwiOlwia2h1c2hidS5wYXRlbCsxQGluZGlhZ29sZC5jb1wiLFwiY3JlYXRlZEF0XCI6MTY0NTU5MjIxNDI4OCxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJMT0FOX01BTkFHRVJcIixcIlJFTEVBU0VfTUFOQUdFUlwiXX0iLCJpYXQiOjE3NTY3MTg1OTQsImV4cCI6MTc1NjcyOTM5NH0.DJXbafyb2vo2WGorP8eyAnHsn7WjsizRocs7zH9z4KhWKMgF_3x-A-nh8844EFk9U7rASoO9CMp3qW6o2Psh4w\" -H \"device-type: **\" -H \"user-agent: **\" --data $'{\"CREATOR\":{},\"customerAddress\":\"Karol bagh\",\"dsaLenderEnumName\":\"RBL\",\"firstMeetingNote\":\"\",\"googleLatitude\":28.63364992517593,\"googleLongitude\":77.19918932765722,\"isParentLead\":true,\"landmark\":\"om corner\",\"leadId\":29921,\"panNumber\":\"AYOPD1234J\",\"scheduledMeetingDate\":\"2025-09-01\",\"scheduledMeetingTimeSlot\":\"17:00-19:00\"}' --compressed https://fs2.indiagiftsgold.com/lead/credit-report/schedule"
+					},
+					"response": []
+				},
+				{
+					"name": "get_scheduled_lead",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f81c67a1-04e0-4315-8e48-0f0fb2b9f044",
+								"exec": [
+									"setTimeout(function(){}, 1000);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "0aee209e-9201-4b58-86a7-71bd8f51bb88",
+								"exec": [
+									"// Safe JSON parse\r",
+									"let res = {};\r",
+									"try { res = pm.response.json(); } catch (e) { res = {}; }\r",
+									"\r",
+									"// Extract and persist lead_id if available\r",
+									"const leadId = res?.result?.result?.[0]?.id;\r",
+									"if (leadId) {\r",
+									"  pm.environment.set(\"lead_id\", leadId);\r",
+									"} else {\r",
+									"  pm.environment.unset(\"lead_id\");\r",
+									"}\r",
+									"\r",
+									"// Assert HTTP status\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// 🔴🛑 === STOP-AT CHECK: Halting Collection at This Request ===\r",
+									"if (pm.environment.get(\"stop_at\") === pm.info.requestName) {\r",
+									"    console.warn(`🛑 STOP-AT TRIGGERED → Execution halted at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevent further processing\r",
+									"}\r",
+									"\r",
+									"// Flow control: proceed on 200; otherwise stop\r",
+									"if (pm.response.code === 200) {\r",
+									"  // Prefer request ID for resilience if names may change\r",
+									"  pm.execution.setNextRequest(\"update_lead_details\");\r",
+									"} else {\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-ef488710-d8c6-4209-9a01-0eb5b9205fc9",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"108\", \"Google Chrome\";v=\"108\""
+							},
+							{
+								"key": "device-version",
+								"value": "6.3.5"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "Referer",
+								"value": "https://fs2-dash.indiagiftsgold.com/"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"macOS\""
+							}
+						],
+						"url": {
+							"raw": "{{lead_engine_base_url}}/scheduling/lead-list?cityId=1&pageNo=1&leadStage=BRANCH_WALKIN&mobile={{customer_mobile_number}}&goldLoanType=FRESH&sortOrder=DESCENDING",
+							"host": [
+								"{{lead_engine_base_url}}"
+							],
+							"path": [
+								"scheduling",
+								"lead-list"
+							],
+							"query": [
+								{
+									"key": "cityId",
+									"value": "1"
+								},
+								{
+									"key": "pageNo",
+									"value": "1"
+								},
+								{
+									"key": "leadStage",
+									"value": "BRANCH_WALKIN"
+								},
+								{
+									"key": "mobile",
+									"value": "{{customer_mobile_number}}"
+								},
+								{
+									"key": "goldLoanType",
+									"value": "FRESH"
+								},
+								{
+									"key": "sortOrder",
+									"value": "DESCENDING"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_lead_details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c89e006e-45ca-4e44-bdff-c6c45079da49",
+								"exec": [
+									"// 1) Assert HTTP 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// 🔴🛑 === STOP-AT CHECK: Halting Collection at This Request ===\r",
+									"if (pm.environment.get(\"stop_at\") === pm.info.requestName) {\r",
+									"    console.warn(`🛑 STOP-AT TRIGGERED → Execution halted at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevent further processing\r",
+									"}\r",
+									"\r",
+									"// 2) Flow control: proceed on success; otherwise stop\r",
+									"if (pm.response.code === 200) {\r",
+									"  // Prefer request ID if names may change:\r",
+									"  pm.execution.setNextRequest(\"assign_agents\");\r",
+									"} else {\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6b37fd67-d3f5-4fd9-b8a6-751ce135c5cb",
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-8c317fe7-cf60-4cbc-be0b-b084dc46d419",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authority",
+								"value": "dev.indiagiftsgold.com"
+							},
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "device-version",
+								"value": "5.8.0"
+							},
+							{
+								"key": "origin",
+								"value": "https://fs1-dash.indiagiftsgold.com"
+							},
+							{
+								"key": "referer",
+								"value": "https://fs1-dash.indiagiftsgold.com/"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"Windows\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-site"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							},
+							{
+								"key": "x-app-signature",
+								"value": "eyJraWQiOiJsWUJXVmciLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjEwMzk5NTYxODA3MjU6d2ViOjUxODlhZWViZDUzMzI4ZmVlOTBmYmMiLCJhdWQiOlsicHJvamVjdHNcLzEwMzk5NTYxODA3MjUiLCJwcm9qZWN0c1wvbG0tYXBwLWRldiJdLCJpc3MiOiJodHRwczpcL1wvZmlyZWJhc2VhcHBjaGVjay5nb29nbGVhcGlzLmNvbVwvMTAzOTk1NjE4MDcyNSIsImV4cCI6MTY2ODU5NTQxOSwiaWF0IjoxNjY4NTkxODE5fQ.x9v16Iy4xBzad3kCrSmWgPtF2PH1xE7tzg_zqdvN-4NYk5--ZIIaEH0A0u-L4zcnQiDBBiAmvpfH1oaLezaN5F48l_9di6MVK-iti9EMYtLFB293x9znsDjPVK9miJ1k9Kmgz_hVC0YpMbx2pjnTSu19Df3ZJuoOsPt3Rr75nsEV1LCCSQOwXyQHT8_PNmnx8L5pzlvNgTL4uGWQaf9MEe26c1krQd_cm-iHvORa0sPMIVy_huZAD2vqbVKclDYYCCCugq--LtoU4AGrpTjhqRJTCycSLmgOnkLMbXFVMoFndfK54SoUxyrngQHwteaYSoo3eeucwiyNRmzdcC3n6v5JLusZg-UHo6_Ga-nEg1oVE3L8FDZ7Z0V-3mn719bfVmpHzA3ye6HaUnebmIslZ1j1JeG9I4PMzS4uXnfpQlcDInnhqCabk13att8v59yFALm-yRjYR-F-m09zPkqBmTF3EznB9h7aFQXj2VazHipxEOF79CiJUJqEFLdqAPzy",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Atul\",\n    \"lastName\": \"Gupta\",\n    \"goldLoanType\": \"FRESH\",\n    \"loanAmount\": \"{{loan_requested_amount}}\",\n    \"lmLockerId\": 26,\n    \"lastInsideSalesCallBy\": \"\",\n    \"source\": \"WHATSAPP\",\n    \"referral\": \"khushbu.patel@indiagold.co\",\n    \"currentLenderEnum\": null,\n    \"currentLenderName\": null,\n    \"originalSource\": \"\",\n    \"interestRate\": \"\",\n    \"alternateMobile\": \"N/A\"\n}"
+						},
+						"url": {
+							"raw": "{{lead_engine_base_url}}/lead-detail/{{lead_id}}/detail",
+							"host": [
+								"{{lead_engine_base_url}}"
+							],
+							"path": [
+								"lead-detail",
+								"{{lead_id}}",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "assign_agents",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "bb051ef9-6995-49c4-8483-2880b5ac5bca",
+								"exec": [
+									"var moment = require ('moment');\r",
+									"pm.variables.set (\"timestamp_ms\",moment());"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "be6125f7-81a3-40b9-b46a-a34c001af50c",
+								"exec": [
+									"// 1) Assert HTTP 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// 🔴🛑 === STOP-AT CHECK: Halting Collection at This Request ===\r",
+									"if (pm.environment.get(\"stop_at\") === pm.info.requestName) {\r",
+									"    console.warn(`🛑 STOP-AT TRIGGERED → Execution halted at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevent further processing\r",
+									"}\r",
+									"\r",
+									"// 2) Flow control: proceed on success; otherwise stop\r",
+									"if (pm.response.code === 200) {\r",
+									"  // Use request ID for resilience if names may change:\r",
+									"  pm.execution.setNextRequest(\"change_lead_stage\");\r",
+									"} else {\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-af08ed32-5286-4240-a83f-63668c0835bf",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authority",
+								"value": "dev.indiagiftsgold.com"
+							},
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "device-version",
+								"value": "5.8.0"
+							},
+							{
+								"key": "origin",
+								"value": "https://fs1-dash.indiagiftsgold.com"
+							},
+							{
+								"key": "referer",
+								"value": "https://fs1-dash.indiagiftsgold.com/"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"Windows\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-site"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							},
+							{
+								"key": "x-app-signature",
+								"value": "eyJraWQiOiJsWUJXVmciLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjEwMzk5NTYxODA3MjU6d2ViOjUxODlhZWViZDUzMzI4ZmVlOTBmYmMiLCJhdWQiOlsicHJvamVjdHNcLzEwMzk5NTYxODA3MjUiLCJwcm9qZWN0c1wvbG0tYXBwLWRldiJdLCJpc3MiOiJodHRwczpcL1wvZmlyZWJhc2VhcHBjaGVjay5nb29nbGVhcGlzLmNvbVwvMTAzOTk1NjE4MDcyNSIsImV4cCI6MTY2ODU5NTQxOSwiaWF0IjoxNjY4NTkxODE5fQ.x9v16Iy4xBzad3kCrSmWgPtF2PH1xE7tzg_zqdvN-4NYk5--ZIIaEH0A0u-L4zcnQiDBBiAmvpfH1oaLezaN5F48l_9di6MVK-iti9EMYtLFB293x9znsDjPVK9miJ1k9Kmgz_hVC0YpMbx2pjnTSu19Df3ZJuoOsPt3Rr75nsEV1LCCSQOwXyQHT8_PNmnx8L5pzlvNgTL4uGWQaf9MEe26c1krQd_cm-iHvORa0sPMIVy_huZAD2vqbVKclDYYCCCugq--LtoU4AGrpTjhqRJTCycSLmgOnkLMbXFVMoFndfK54SoUxyrngQHwteaYSoo3eeucwiyNRmzdcC3n6v5JLusZg-UHo6_Ga-nEg1oVE3L8FDZ7Z0V-3mn719bfVmpHzA3ye6HaUnebmIslZ1j1JeG9I4PMzS4uXnfpQlcDInnhqCabk13att8v59yFALm-yRjYR-F-m09zPkqBmTF3EznB9h7aFQXj2VazHipxEOF79CiJUJqEFLdqAPzy",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"primaryAgent\": {\n        \"id\": \"{{agent_id}}\",\n        \"userRoleList\": [\n            \"LOAN_MANAGER\"\n        ],\n        \"mobile\": \"{{lm_mobile}}\",\n        \"name\": \"{{lm_name}}\",\n        \"createdAt\": \"{{timestamp_ms}}\",\n        \"email\": \"khushbu.patel+1@indiagold.co\",\n        \"gender\": \"Female\",\n        \"homeNumber\": null,\n        \"lmTeamId\": null,\n        \"access_token\": null,\n        \"refreshToken\": null,\n        \"profilePicture\": null,\n        \"age\": 26,\n        \"status\": \"ACTIVE\",\n        \"updatedAt\": \"{{timestamp_ms}}\",\n        \"userRole\": null,\n        \"isBusy\": true,\n        \"internalUserAddressDto\": null,\n        \"startingWorkHour\": \"0900\",\n        \"endingWorkHour\": \"2100\",\n        \"title\": \"{{lm_name}}\"\n    },\n    \"secondaryAgentIdList\": [],\n    \"goldLoanType\": \"FRESH\",\n    \"primaryAgentId\": \"{{agent_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{lead_engine_base_url}}/lead-detail/{{lead_id}}/assign-agents",
+							"host": [
+								"{{lead_engine_base_url}}"
+							],
+							"path": [
+								"lead-detail",
+								"{{lead_id}}",
+								"assign-agents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change_lead_stage",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a5e83ca6-3013-47b3-9d0c-d105cd7faa27",
+								"exec": [
+									"// 1) Assert HTTP 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// 🔴🛑 === STOP-AT CHECK: Halting Collection at This Request ===\r",
+									"if (pm.environment.get(\"stop_at\") === pm.info.requestName) {\r",
+									"    console.warn(`🛑 STOP-AT TRIGGERED → Execution halted at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevent further processing\r",
+									"}\r",
+									"\r",
+									"// 2) Flow control: proceed on success; otherwise stop\r",
+									"if (pm.response.code === 200) {\r",
+									"  // Use request ID for resilience if names may change:\r",
+									"  pm.execution.setNextRequest(\"assign_job\");\r",
+									"} else {\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-7c837b99-e054-4a17-9d6b-7a80a25bc1d2",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authority",
+								"value": "fs5.indiagiftsgold.com"
+							},
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "device-version",
+								"value": "8.5.8"
+							},
+							{
+								"key": "origin",
+								"value": "https://fs2-dash.indiagiftsgold.com"
+							},
+							{
+								"key": "referer",
+								"value": "https://fs2-dash.indiagiftsgold.com/"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Google Chrome\";v=\"119\", \"Chromium\";v=\"119\", \"Not?A_Brand\";v=\"24\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"Windows\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-site"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							},
+							{
+								"key": "x-app-signature",
+								"value": "eyJraWQiOiJURDByRlEiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjEwMzk5NTYxODA3MjU6d2ViOjUxODlhZWViZDUzMzI4ZmVlOTBmYmMiLCJhdWQiOlsicHJvamVjdHNcLzEwMzk5NTYxODA3MjUiLCJwcm9qZWN0c1wvbG0tYXBwLWRldiJdLCJwcm92aWRlciI6InJlY2FwdGNoYV92MyIsImlzcyI6Imh0dHBzOlwvXC9maXJlYmFzZWFwcGNoZWNrLmdvb2dsZWFwaXMuY29tXC8xMDM5OTU2MTgwNzI1IiwiZXhwIjoxNzAxMjM2OTM4LCJpYXQiOjE3MDEyMzMzMzgsImp0aSI6IkhaMXBPQUpQYm9JVHFoekxrbnZlRTE3bngtQWtNUmh4U2FqVFowQkMyTm8ifQ.cRSnwVVojEE29BZZJ6NNzKSuAf9QuWX1x4qJopwtx_8BPOnOYstGJ7RMM7wZm8KkYDenujPlkTUU1-FrZA6xSFtkLzyhKR2v6XKzG2qqcO4kZOuzgnylBMxKIbQqzUTMAHJt48PUXwcIlHgxXfc184iTf385SXXrkuodOcL5goCw-i2vtgpXwxe9T0-wmmnrZinEzOU57DFAMK-KOhMoic__GkxxhHe0Ua3MvhXe8bBh2KGktP_yCsyjhXDYCQGKIMwNsX6uQ46TDZFqNq0Ne6ov-uK8-HUNQObvBAJxyaMKGRu81_EqZa44JLXtVKsm3-rxiNnpaBImI2cCfrQP8f7nv84KjYsoO8GDnZvsylP35TU4av8XIju7krNULf2UarPNCbuSEaNwJbZzhut2bVD5gMU7NygYgLMCJLRpMR2tXIUAqxwlWsJjAiiITiS0pwSE8Swe3tTXTiRhtkhLKgv6J9XhGug2o_wmp_kjPCEUsfyjkOCjiEzRBwKkNKF3",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"leadStage\":\"SCHEDULED\",\"remark\":null}"
+						},
+						"url": {
+							"raw": "{{lead_engine_base_url}}/lead-detail/{{lead_id}}/stage",
+							"host": [
+								"{{lead_engine_base_url}}"
+							],
+							"path": [
+								"lead-detail",
+								"{{lead_id}}",
+								"stage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "assign_job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "054a4f95-f10d-4ef6-a3e9-39fb5eb8e6e6",
+								"exec": [
+									"// 1) Assert HTTP 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// 2) Parse response safely\r",
+									"let res = {};\r",
+									"try { res = pm.response.json(); } catch (e) {\r",
+									"  console.warn(\"Response is not valid JSON\");\r",
+									"  res = {};\r",
+									"}\r",
+									"\r",
+									"// 3) Set env vars only if values exist; unset otherwise to avoid stale data\r",
+									"if (res?.result?.crId) {\r",
+									"  pm.environment.set(\"cr_id\", res.result.crId);\r",
+									"} else {\r",
+									"  pm.environment.unset(\"cr_id\");\r",
+									"}\r",
+									"if (res?.result?.id) {\r",
+									"  pm.environment.set(\"cr_job_id\", res.result.id);\r",
+									"} else {\r",
+									"  pm.environment.unset(\"cr_job_id\");\r",
+									"}\r",
+									"\r",
+									"// 🔴🛑 === STOP-AT CHECK: Halting Collection at This Request ===\r",
+									"if (pm.environment.get(\"stop_at\") === pm.info.requestName) {\r",
+									"    console.warn(`🛑 STOP-AT TRIGGERED → Execution halted at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevent further processing\r",
+									"}\r",
+									"\r",
+									"// 4) Control flow: proceed on success; otherwise stop\r",
+									"if (pm.response.code === 200) {\r",
+									"  // Prefer request ID for resilience if names may change:\r",
+									"  console.log(\"Proceeding to: skip_geo_fence\");\r",
+									"  pm.execution.setNextRequest(\"skip_geo_fence\");\r",
+									"} else {\r",
+									"  console.log(\"Response not 200, stopping execution\");\r",
+									"  pm.execution.setNextRequest(null);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-9044f702-3506-41f9-9b96-f182985f0c5f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authority",
+								"value": "fs5.indiagiftsgold.com"
+							},
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "device-version",
+								"value": "8.5.8"
+							},
+							{
+								"key": "origin",
+								"value": "https://fs2-dash.indiagiftsgold.com"
+							},
+							{
+								"key": "referer",
+								"value": "https://fs2-dash.indiagiftsgold.com/"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Google Chrome\";v=\"119\", \"Chromium\";v=\"119\", \"Not?A_Brand\";v=\"24\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"Windows\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-site"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							},
+							{
+								"key": "x-app-signature",
+								"value": "eyJraWQiOiJURDByRlEiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjEwMzk5NTYxODA3MjU6d2ViOjUxODlhZWViZDUzMzI4ZmVlOTBmYmMiLCJhdWQiOlsicHJvamVjdHNcLzEwMzk5NTYxODA3MjUiLCJwcm9qZWN0c1wvbG0tYXBwLWRldiJdLCJwcm92aWRlciI6InJlY2FwdGNoYV92MyIsImlzcyI6Imh0dHBzOlwvXC9maXJlYmFzZWFwcGNoZWNrLmdvb2dsZWFwaXMuY29tXC8xMDM5OTU2MTgwNzI1IiwiZXhwIjoxNzAxMjM2OTM4LCJpYXQiOjE3MDEyMzMzMzgsImp0aSI6IkhaMXBPQUpQYm9JVHFoekxrbnZlRTE3bngtQWtNUmh4U2FqVFowQkMyTm8ifQ.cRSnwVVojEE29BZZJ6NNzKSuAf9QuWX1x4qJopwtx_8BPOnOYstGJ7RMM7wZm8KkYDenujPlkTUU1-FrZA6xSFtkLzyhKR2v6XKzG2qqcO4kZOuzgnylBMxKIbQqzUTMAHJt48PUXwcIlHgxXfc184iTf385SXXrkuodOcL5goCw-i2vtgpXwxe9T0-wmmnrZinEzOU57DFAMK-KOhMoic__GkxxhHe0Ua3MvhXe8bBh2KGktP_yCsyjhXDYCQGKIMwNsX6uQ46TDZFqNq0Ne6ov-uK8-HUNQObvBAJxyaMKGRu81_EqZa44JLXtVKsm3-rxiNnpaBImI2cCfrQP8f7nv84KjYsoO8GDnZvsylP35TU4av8XIju7krNULf2UarPNCbuSEaNwJbZzhut2bVD5gMU7NygYgLMCJLRpMR2tXIUAqxwlWsJjAiiITiS0pwSE8Swe3tTXTiRhtkhLKgv6J9XhGug2o_wmp_kjPCEUsfyjkOCjiEzRBwKkNKF3",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{lead_engine_base_url}}/scheduling/lead/{{lead_id}}/cr-job",
+							"host": [
+								"{{lead_engine_base_url}}"
+							],
+							"path": [
+								"scheduling",
+								"lead",
+								"{{lead_id}}",
+								"cr-job"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "skip_geo_fence",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4e368a57-b3d2-415f-9ab3-f2e33851f333",
+								"exec": [
+									"// 1) Assert HTTP 200",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"// 🔴🛑 === STOP-AT CHECK: Halting Collection at This Request ===",
+									"if (pm.environment.get(\"stop_at\") === pm.info.requestName) {",
+									"    console.warn(`🛑 STOP-AT TRIGGERED → Execution halted at: ${pm.info.requestName}`);",
+									"    pm.execution.setNextRequest(null);",
+									"    return;   // ✅ Prevent further processing",
+									"}",
+									"",
+									"// 2) Flow control: proceed on success; otherwise stop",
+									"if (pm.response.code === 200) {",
+									"  // Use request ID for resilience if names may change:",
+									"  pm.execution.setNextRequest(\"FL_START_JOB_change_status\");",
+									"} else {",
+									"  pm.execution.setNextRequest(null);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-c5082546-3ab5-4fbe-9363-9037bd9bbfe0",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							},
+							{
+								"key": "cache-control",
+								"value": "no-cache"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "device-version",
+								"value": "12.6.4"
+							},
+							{
+								"key": "ngrok-skip-browser-warning",
+								"value": "69420"
+							},
+							{
+								"key": "origin",
+								"value": "https://dev-dash.indiagiftsgold.com"
+							},
+							{
+								"key": "pragma",
+								"value": "no-cache"
+							},
+							{
+								"key": "priority",
+								"value": "u=1, i"
+							},
+							{
+								"key": "referer",
+								"value": "https://dev-dash.indiagiftsgold.com/"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"macOS\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-site"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/business/cr-feature-flag/cr/{{cr_id}}/update-key-value?flagName=SKIP_CONTACT_CUSTOMER_GEOFENCING&value=true&remark=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"cr-feature-flag",
+								"cr",
+								"{{cr_id}}",
+								"update-key-value"
+							],
+							"query": [
+								{
+									"key": "flagName",
+									"value": "SKIP_CONTACT_CUSTOMER_GEOFENCING"
+								},
+								{
+									"key": "value",
+									"value": "true"
+								},
+								{
+									"key": "remark",
+									"value": ""
+								}
+							]
+						},
+						"description": "Generated from cURL: curl 'https://fs1.indiagiftsgold.com/business/cr-feature-flag/cr/20585/update-key-value?flagName=SKIP_CONTACT_CUSTOMER_GEOFENCING&value=true&remark=' \\\n  -X 'PUT' \\\n  -H 'accept: application/json, text/plain, */*' \\\n  -H 'accept-language: en-US,en;q=0.9' \\\n  -H 'cache-control: no-cache' \\\n  -H 'content-length: 0' \\\n  -H 'device-env: development' \\\n  -H 'device-type: DASHBOARD' \\\n  -H 'device-version: 12.6.4' \\\n  -H 'ngrok-skip-browser-warning: 69420' \\\n  -H 'origin: https://dev-dash.indiagiftsgold.com' \\\n  -H 'pragma: no-cache' \\\n  -H 'priority: u=1, i' \\\n  -H 'referer: https://dev-dash.indiagiftsgold.com/' \\\n  -H 'sec-ch-ua: \"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  -H 'sec-fetch-dest: empty' \\\n  -H 'sec-fetch-mode: cors' \\\n  -H 'sec-fetch-site: same-site' \\\n  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36' \\\n  -H 'x-access-token: eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6OTAsXCJtb2JpbGVcIjpudWxsLFwiZW1haWxcIjpcImF0dWwuaW5kaWFnb2xkQGdtYWlsLmNvbVwiLFwiY3JlYXRlZEF0XCI6MTYwMDY2OTM4NTkwMyxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJBRE1JTlwiLFwiQ1NUXCIsXCJDUkVESVRfTUFOQUdFUlwiLFwiTEVWRUwxXCIsXCJDVVNUT01FUl9TVVBQT1JUXCIsXCJTVVBFUl9BRE1JTl9VU0VSXCIsXCJSRUxFQVNFX01BTkFHRVJcIixcIlNDSEVEVUxFUl9URUFNX0xFQURcIixcIkxPQU5fQlVTSU5FU1NfQ0hFQ0tFUl9BRE1JTlwiXX0iLCJpYXQiOjE3NTc5MzUwMTEsImV4cCI6MTc1Nzk0NTgxMX0.3SyVU8ODmImbNz8eOYEDS_ElrQUOj_Ri62Bw3JvwB1uniuu5nRhHLCj-AdaFrd3uRD1-785N6nF_8_r98xidPg' \\\n  -H 'x-app-signature: eyJraWQiOiJVTjJhMmciLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjEwMzk5NTYxODA3MjU6d2ViOjUxODlhZWViZDUzMzI4ZmVlOTBmYmMiLCJhdWQiOlsicHJvamVjdHMvMTAzOTk1NjE4MDcyNSIsInByb2plY3RzL2xtLWFwcC1kZXYiXSwicHJvdmlkZXIiOiJyZWNhcHRjaGFfdjMiLCJpc3MiOiJodHRwczovL2ZpcmViYXNlYXBwY2hlY2suZ29vZ2xlYXBpcy5jb20vMTAzOTk1NjE4MDcyNSIsImV4cCI6MTc1NzkzODYwNiwiaWF0IjoxNzU3OTM1MDA2LCJqdGkiOiJkZm84Zl84RllkWUtLRzF4dnRkeFVYSWthN3ZjaTU3OHM3TkhmZTNaZ1BFIn0.Ic0O2GBHRO3H0O0YrXL4o-lO5aCm_kFLINd4Sux0HIdUFzMyKrx-enKLmqTmbg-7fJ5-_2b1f19PoANkDPGWH_mKNMOcQc5tM0kHQnIpGgzy-djuJQicflnb9VzXNiL-iLoGO_L-ipCzHO10084IVMH9KWgc2wrKlrKXfrQu-cBIK787D3hIr8NekFo0WxVg42lKwAo8cZ2zDQI-RS_0mvcqAPIIMJ39_M0dHLkUout7gtm6Y8JZLxkgg4lBwoN0xiM0pAFughW5CXqIc6UASgFOtbYEzAVTSY7LpnMoOVKCMvBL1UNV1kzErdyP6I7WuoKv50PeEmvO-vhTRqRG9aBuXyU3LMhqNCVkEKijKj_BC0xpKbWsdMSTS8NaLfmBATg-AudE_B5Z06XE-HLRAlMZ5Vic8kuTLIVU_r_YWQHUdruRi_zUPJj9HhW1MkD2g8Ow3_UUOKwW6fZkLnZxEYp33aQF0kAh0C4zPGAIKfltgjLwIfSpSOEK6W9jZm7I'"
+					},
+					"response": []
+				},
+				{
+					"name": "FL_START_JOB_change_status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "b550f8be-3313-47fd-b928-7063fbb591fd",
+								"exec": [
+									"var date = Date.now();\r",
+									"pm.environment.set(\"current_time\", date);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "18409dc2-c173-479e-80ef-365f2d92764e",
+								"exec": [
+									"// === STOP-AT HANDLING ===\r",
+									"const stopAt = pm.environment.get(\"stop_at\");\r",
+									"if (stopAt === pm.info.requestName) {\r",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevents retry logic from executing\r",
+									"}\r",
+									"\r",
+									"// Config\r",
+									"const maxRetries = 2;           // total attempts = maxRetries + 1\r",
+									"const retryVar = \"FL_START_retryCount\"; // use a unique name per request\r",
+									"\r",
+									"// Read and normalize counter from environment (persists across requests)\r",
+									"let retryCount = parseInt(pm.environment.get(retryVar) || \"0\", 10);\r",
+									"\r",
+									"// Success path: clear counter and chain to next request\r",
+									"if (pm.response.code === 200) {\r",
+									"  pm.environment.unset(retryVar);\r",
+									"  // Prefer request ID if names may change\r",
+									"  pm.execution.setNextRequest(\"FL_REACHED_CUSTOMER_LANDMARK_change_status\");\r",
+									"} else {\r",
+									"  // Retry path: re-run the same request up to maxRetries\r",
+									"  if (retryCount < maxRetries) {\r",
+									"    retryCount += 1;\r",
+									"    pm.environment.set(retryVar, String(retryCount));\r",
+									"    console.log(`Retrying request... Attempt ${retryCount}/${maxRetries}`);\r",
+									"\r",
+									"    setTimeout(function() {\r",
+									"            pm.execution.setNextRequest(pm.info.requestName);\r",
+									"        }, 1000); // 1-second delay before retrying\r",
+									"        \r",
+									"    pm.execution.setNextRequest(pm.info.requestName);\r",
+									"  } else {\r",
+									"    console.log(\"Max retries reached. Stopping run.\");\r",
+									"    pm.environment.unset(retryVar);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"  }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-45c1f7f6-83d1-4de9-8284-3a1228c2ebfe",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8"
+							},
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "app-version-code",
+								"value": "{{appVersionCode}}"
+							},
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-id",
+								"value": "572e87855ee349d8"
+							},
+							{
+								"key": "device-type",
+								"value": "ANDROID"
+							},
+							{
+								"key": "device-version",
+								"value": "1.41"
+							},
+							{
+								"key": "user-agent",
+								"value": "{\"device_type\":\"ANDROID\",\"device_id\":\"572e87855ee349d8\",\"device_model\":\"Xiaomi  M2006C3MII\",\"device_android_version\":29}"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token_lm_app}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"clientCreatedAt\":{{current_time}},\"clientUpdatedAt\":{{current_time}},\"remark\":\"From App\",\"status\":\"FL_START_JOB\"}"
+						},
+						"url": {
+							"raw": "{{base_url}}/business/cr/{{cr_id}}/job/{{cr_job_id}}/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"cr",
+								"{{cr_id}}",
+								"job",
+								"{{cr_job_id}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FL_REACHED_CUSTOMER_LANDMARK_change_status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6ccf30df-cd64-465c-b390-44264006953f",
+								"exec": [
+									"var date = Date.now();\r",
+									"pm.environment.set(\"current_time\", date);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "11fa52ef-3080-4d6d-a832-7fa6a27d544e",
+								"exec": [
+									"// === STOP-AT HANDLING ===\r",
+									"const stopAt = pm.environment.get(\"stop_at\");\r",
+									"if (stopAt === pm.info.requestName) {\r",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevents retry logic from executing\r",
+									"}\r",
+									"\r",
+									"// ==== Retry configuration ====\r",
+									"const maxRetries = 2;                  // total attempts = maxRetries + 1\r",
+									"const retryVar = \"lender_retry_count\"; // unique per request to avoid clashes\r",
+									"\r",
+									"// Persist retry counter in environment/collection scope so it survives across requests\r",
+									"let retryCount = parseInt(pm.environment.get(retryVar) || \"0\", 10);\r",
+									"\r",
+									"// ==== Success path ====\r",
+									"if (pm.response.code === 200) {\r",
+									"  pm.environment.unset(retryVar);\r",
+									"  // Prefer request ID if names may change:\r",
+									"  // pm.execution.setNextRequest(\"1ab12345-4ab4-4124-c000-12341abc1234\");\r",
+									"  pm.execution.setNextRequest(\"lender_selection\");\r",
+									"} else {\r",
+									"  // ==== Retry path ====\r",
+									"  if (retryCount < maxRetries) {\r",
+									"    retryCount += 1;\r",
+									"    pm.environment.set(retryVar, String(retryCount));\r",
+									"    console.log(`Retrying request... Attempt ${retryCount}/${maxRetries}`);\r",
+									"\r",
+									"    setTimeout(function() {\r",
+									"            pm.execution.setNextRequest(pm.info.requestName);\r",
+									"        }, 1000); // 1-second delay before retrying\r",
+									"        \r",
+									"    pm.execution.setNextRequest(pm.info.requestName);\r",
+									"  } else {\r",
+									"    console.log(\"Max retries reached. Stopping run.\");\r",
+									"    pm.environment.unset(retryVar);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"  }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-c071f402-fd13-4fb8-a527-9f2e954d30eb",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8"
+							},
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "app-version-code",
+								"value": "{{appVersionCode}}"
+							},
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-id",
+								"value": "572e87855ee349d8"
+							},
+							{
+								"key": "device-type",
+								"value": "ANDROID"
+							},
+							{
+								"key": "device-version",
+								"value": "1.41"
+							},
+							{
+								"key": "user-agent",
+								"value": "{\"device_type\":\"ANDROID\",\"device_id\":\"572e87855ee349d8\",\"device_model\":\"Xiaomi  M2006C3MII\",\"device_android_version\":29}"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token_lm_app}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"clientCreatedAt\":{{current_time}},\"clientUpdatedAt\":{{current_time}},\"remark\":\"From App\",\"status\":\"FL_REACHED_CUSTOMER_LANDMARK\"}"
+						},
+						"url": {
+							"raw": "{{base_url}}/business/cr/{{cr_id}}/job/{{cr_job_id}}/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"cr",
+								"{{cr_id}}",
+								"job",
+								"{{cr_job_id}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lender_selection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0048dc9b-2368-4098-bf40-0afd5f6d8e1d",
+								"exec": [
+									"// 1️⃣ Assert HTTP 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// 🔴🛑 === STOP-AT CHECK: Halting Collection at This Request ===\r",
+									"if (pm.environment.get(\"stop_at\") === pm.info.requestName) {\r",
+									"    console.warn(`🛑 STOP-AT TRIGGERED → Execution halted at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevent further processing\r",
+									"}\r",
+									"\r",
+									"// 2️⃣ Get lender_name from environment\r",
+									"const lender_name = pm.environment.get(\"lender_name\");\r",
+									"\r",
+									"// 3️⃣ Flow control based on response & lender_name\r",
+									"if (pm.response.code === 200) {\r",
+									"    if (lender_name === \"MAG_FINSERV\") {\r",
+									"        // Go to alternate API if lender_name = MAG_FINSERV\r",
+									"        pm.execution.setNextRequest(\"dsa_loan_booking_document\");\r",
+									"    } else {\r",
+									"        // Default flow\r",
+									"        pm.execution.setNextRequest(\"get_ifsc_detail\");\r",
+									"    }\r",
+									"} else {\r",
+									"    // Stop execution if API failed\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "b197004b-0341-4879-9471-0e266f33961f",
+								"exec": [
+									"\r",
+									"",
+									"const lender_name = pm.environment.get(\"lender_name\");\r",
+									"if ( lender_name === \"HDFC\") {\r",
+									"      body = {\r",
+									"        dsaLenderAdditionalDetailDto: {\r",
+									"            branchCode: \"20500\",\r",
+									"            dob: 967746600000,\r",
+									"            goldWeightG: 50,\r",
+									"            loanAmount: pm.environment.get(\"loan_requested_amount\")\r",
+									"        },\r",
+									"        lenderEnum: \"HDFC\",\r",
+									"        screenType: \"LOAN_BOOKING\"\r",
+									"    };\r",
+									"} else {\r",
+									"",
+									"    body = {\r",
+									"        lenderEnum: lender_name,\r",
+									"        screenType: \"LOAN_BOOKING\"\r",
+									"    };\r",
+									"}\r",
+									"\r",
+									"",
+									"pm.variables.set(\"requestBody\", JSON.stringify(body));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-c7b2e0eb-f0b4-48ec-addf-8ffd8d5b31a1",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-version",
+								"value": "6.10"
+							},
+							{
+								"key": "app-version-code",
+								"value": "510"
+							},
+							{
+								"key": "device-id",
+								"value": "f75419f41629a67f"
+							},
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "device-udid",
+								"value": ""
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token_lm_app}}"
+							},
+							{
+								"key": "device-type",
+								"value": "**"
+							},
+							{
+								"key": "user-agent",
+								"value": "**"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{requestBody}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/business/cr/{{cr_id}}/lender",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"cr",
+								"{{cr_id}}",
+								"lender"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST -H \"device-env: debug\" -H \"device-version: 6.10\" -H \"app-version-code: 510\" -H \"device-id: f75419f41629a67f\" -H \"accept-language: en\" -H \"device-udid: \" -H \"x-access-token: eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6Mjg4LFwibW9iaWxlXCI6XCI5MDk5OTYxNzk3XCIsXCJlbWFpbFwiOlwia2h1c2hidS5wYXRlbCsxQGluZGlhZ29sZC5jb1wiLFwiY3JlYXRlZEF0XCI6MTY0NTU5MjIxNDI4OCxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJMT0FOX01BTkFHRVJcIixcIlJFTEVBU0VfTUFOQUdFUlwiXX0iLCJpYXQiOjE3NTc0MTk1NTgsImV4cCI6MTc1NzQzMDM1OH0.Laas5qAjxXr5grDI7G2FZ2YzBSzqv_34Vy-sovB1bFJnn_NmZO9cj0G1XKYPyWQJCXUkMUGotQcPU05Ey9Z7pg\" -H \"device-type: **\" -H \"user-agent: **\" --data $'{\"lenderEnum\":\"RBL\",\"screenType\":\"LOAN_BOOKING\"}' --compressed https://fs2.indiagiftsgold.com/business/cr/20561/lender"
+					},
+					"response": []
+				},
+				{
+					"name": "get_ifsc_detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6099ac89-9500-48f1-8c52-b84718fb9cb8",
+								"exec": [
+									"// 1) Safe JSON parse",
+									"let res = {};",
+									"try { res = pm.response.json(); } catch (e) { res = {}; }",
+									"",
+									"// 2) Persist branch fields only if present; unset to avoid stale values",
+									"if (res?.result?.BRANCH) {",
+									"  pm.environment.set(\"BRANCH_NAME\", res.result.BRANCH);",
+									"} else {",
+									"  pm.environment.unset(\"BRANCH_NAME\");",
+									"}",
+									"if (res?.result?.CITY) {",
+									"  pm.environment.set(\"BRANCH_CITY\", res.result.CITY);",
+									"} else {",
+									"  pm.environment.unset(\"BRANCH_CITY\");",
+									"}",
+									"",
+									"// 3) Assert HTTP 200",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// === STOP-AT HANDLING ===",
+									"const stopAt = pm.environment.get(\"stop_at\");",
+									"if (stopAt === pm.info.requestName) {",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);",
+									"    pm.execution.setNextRequest(null);",
+									"    return;   // ✅ Prevents retry logic from executing",
+									"}",
+									"",
+									"// 4) Flow control: proceed on success; otherwise stop",
+									"if (pm.response.code === 200) {",
+									"  pm.execution.setNextRequest(\"dsa_loan_booking_document\");",
+									"} else {",
+									"  pm.execution.setNextRequest(null);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d7e7acb4-8f74-4bae-94f2-2d124eaca600",
+								"exec": [
+									"const lender_name = pm.environment.get(\"lender_name\");",
+									"",
+									"let ifscMap = {",
+									"    \"HDFC\": \"HDFC0004459\",",
+									"    \"BANDHAN_BANK\": \"BDBL0002518\",",
+									"    \"ICICI\": \"ICIC0000065\",",
+									"    \"RBL\": \"RATN0000142\",",
+									"    \"UNITY_SMALL_FINANCE_BANK\": \"UNBA0000605\"",
+									"};",
+									"",
+									"if (ifscMap[lender_name]) {",
+									"    pm.environment.set(\"lender_ifsc_code\", ifscMap[lender_name]);",
+									"    console.log(`Set lender_ifsc_code = ${ifscMap[lender_name]}`);",
+									"} else {",
+									"    console.warn(`No IFSC mapping found for lender_name: ${lender_name}`);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-ebab4d8a-3898-4d71-8afc-a7d13979c589",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "app-version-code",
+								"value": "510"
+							},
+							{
+								"key": "device-type",
+								"value": "ANDROID"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token_lm_app}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/business/ifsc/{{lender_ifsc_code}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"ifsc",
+								"{{lender_ifsc_code}}"
+							]
+						},
+						"description": "Generated from cURL: curl -X GET -H 'accept-language: en' -H 'app-version-code: 510' -H 'device-env: debug' -H 'device-id: 9c6be6d23ed9137d' -H 'device-type: ANDROID' -H 'device-udid: ' -H 'device-version: 6.10' -H 'user-agent: {\"device_type\":\"ANDROID\",\"device_id\":\"9c6be6d23ed9137d\",\"device_model\":\"Xiaomi  24108PCE2I\",\"device_android_version\":35}' -H 'x-access-token: eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6MTQsXCJtb2JpbGVcIjpcIjgyOTk1OTIyNzVcIixcImVtYWlsXCI6XCJhdHVsQGluZGlhZ29sZC5jb1wiLFwiY3JlYXRlZEF0XCI6MTYwMDc2MzY2MzAwMCxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJMT0FOX01BTkFHRVJcIixcIlZBVUxUX01BTkFHRVJcIl19IiwiaWF0IjoxNzU3OTI4ODkwLCJleHAiOjE3NTc5Mzk2OTB9.7pbT44NBNsPNVgyIBad2CEVlItPAoX35TTT8F4wn9Y0gRQwNILyp3DpUToVMQifHRnS9rB1r2NEyGIMIqDXxRg' --compressed 'https://dev-java.indiagiftsgold.com/business/ifsc/RATN0000003'"
+					},
+					"response": []
+				},
+				{
+					"name": "dsa_loan_booking_document",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "57b96d7c-f2a2-48f1-8377-db70f5706d9c",
+								"exec": [
+									"// Verify Status Code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// === STOP-AT HANDLING ===\r",
+									"const stopAt = pm.environment.get(\"stop_at\");\r",
+									"if (stopAt === pm.info.requestName) {\r",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"    return;   // ✅ Prevents retry logic from executing\r",
+									"}\r",
+									"\r",
+									"// Set Next Request\r",
+									"if(pm.response.to.have.status(200)){\r",
+									"    pm.execution.setNextRequest(\"loan_detail_from_lm\");\r",
+									"}\r",
+									"else{\r",
+									"    pm.execution.setNextRequest(null);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-b16671bb-9167-4329-a06e-9b8efdb98658",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "app-version-code",
+								"value": "{{appVersionCode}}"
+							},
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-id",
+								"value": "572e87855ee349d8"
+							},
+							{
+								"key": "device-type",
+								"value": "ANDROID"
+							},
+							{
+								"key": "device-version",
+								"value": "1.41"
+							},
+							{
+								"key": "user-agent",
+								"value": "{\"device_type\":\"ANDROID\",\"device_id\":\"572e87855ee349d8\",\"device_model\":\"Xiaomi  M2006C3MII\",\"device_android_version\":29}"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token_lm_app}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "crJobId",
+									"value": "{{cr_job_id}}",
+									"type": "text"
+								},
+								{
+									"key": "documentType",
+									"value": "DSA_LOAN_BOOKING_DOCUMENT",
+									"type": "text"
+								},
+								{
+									"key": "fileContentType",
+									"value": "image/jpg",
+									"type": "text"
+								},
+								{
+									"key": "fileName",
+									"value": "dsa_loan_booking_document.jpg",
+									"type": "text"
+								},
+								{
+									"key": "fileData",
+									"type": "file",
+									"src": "files/dsa_loan_booking_document.jpg"
+								},
+								{
+									"key": "fileType",
+									"value": "IMAGE",
+									"type": "text"
+								},
+								{
+									"key": "isAddressProof",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "isIdProof",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "physicalState",
+									"value": "original",
+									"type": "text"
+								},
+								{
+									"key": "receivingDate",
+									"value": "{{today_date}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/business/cr/{{cr_id}}/document",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"cr",
+								"{{cr_id}}",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "loan_detail_from_lm",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a50f4ba8-4984-44d6-8bea-5f8897848a91",
+								"exec": [
+									"// Generate LAN based on lender rules\r",
+									"const lender_name = pm.environment.get(\"lender_name\");\r",
+									"\r",
+									"const lenderRules = [\r",
+									"    { lender: \"RBL\", lanRegex: \"^8090\\\\d*$\", prefix: \"8090\", enabled: true },\r",
+									"    { lender: \"BANDHAN_BANK\", lanRegex: \"^9000\\\\d*$\", prefix: \"9000\", enabled: true },\r",
+									"    { lender: \"UNITY_SMALL_FINANCE_BANK\", lanRegex: \"^USFB.*\", prefix: \"USFB\", enabled: true }\r",
+									"];\r",
+									"\r",
+									"// Default LAN length range\r",
+									"const minLen = 9;\r",
+									"const maxLen = 12;\r",
+									"\r",
+									"let selectedRule = lenderRules.find(r => r.lender === lender_name && r.enabled);\r",
+									"\r",
+									"let randomLenderLan = \"\";\r",
+									"\r",
+									"if (selectedRule) {\r",
+									"    // Start with the required prefix\r",
+									"    randomLenderLan = selectedRule.prefix;\r",
+									"\r",
+									"    // Calculate how many extra digits needed\r",
+									"    const totalLength = Math.floor(Math.random() * (maxLen - minLen + 1)) + minLen;\r",
+									"    const digitsToAdd = Math.max(totalLength - randomLenderLan.length, 0);\r",
+									"\r",
+									"    for (let i = 0; i < digitsToAdd; i++) {\r",
+									"        randomLenderLan += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"} else {\r",
+									"    // Fallback: normal fully-random LAN\r",
+									"    const lanLength = Math.floor(Math.random() * (maxLen - minLen + 1)) + minLen;\r",
+									"    for (let i = 0; i < lanLength; i++) {\r",
+									"        randomLenderLan += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"pm.environment.set(\"randomLenderLan\", randomLenderLan);\r",
+									"\r",
+									"// Today's date in epoch (milliseconds)\r",
+									"const todayEpoch = new Date().setHours(0, 0, 0, 0);\r",
+									"\r",
+									"// Build the base request body\r",
+									"let body = {\r",
+									"    addressDto: {\r",
+									"        addressLine1: \"Karol bagh\",\r",
+									"        addressLine2: \"\",\r",
+									"        city: \"DELHI\",\r",
+									"        pincode: \"110001\",\r",
+									"        state: \"DELHI\"\r",
+									"    },\r",
+									"    communicationDetailDto: {\r",
+									"        primaryPhoneNumber: pm.environment.get(\"customer_mobile_number\")\r",
+									"    },\r",
+									"    dsaBranchDetailDto: {\r",
+									"        branchCity: pm.environment.get(\"BRANCH_CITY\"),\r",
+									"        branchName: pm.environment.get(\"BRANCH_NAME\"),\r",
+									"        ifsc: pm.environment.get(\"lender_ifsc_code\")\r",
+									"    },\r",
+									"    dsaCrLoanDetailDto: {\r",
+									"        lenderLan: randomLenderLan, // ✅ use the local variable\r",
+									"        loanAmount: pm.environment.get(\"loan_requested_amount\"),\r",
+									"        loanStartDate: todayEpoch,\r",
+									"        ltv: 75,\r",
+									"        processingFee: 2500,\r",
+									"        roiPerAnnum: 12,\r",
+									"        scheme: \"Non Agri - (Bullet) - Flat\",\r",
+									"        tenure: 12\r",
+									"    },\r",
+									"    personalDetailDto: {\r",
+									"        firstName: \"Atul\",\r",
+									"        lastName: \"Gupta\"\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"// Remove branch detail for MAG_FINSERV\r",
+									"if (lender_name === \"MAG_FINSERV\") {\r",
+									"    delete body.dsaBranchDetailDto;\r",
+									"}\r",
+									"\r",
+									"pm.variables.set(\"requestBody\", JSON.stringify(body));\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "17360e61-8955-4561-b2ff-63bca1aea538",
+								"exec": [
+									"// Always validate status",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"// 2. Log environment variable",
+									"const lenderLoanId = pm.environment.get(\"randomLenderLan\");",
+									"console.log(\"🔑 Lender Loan Id:\", lenderLoanId ? lenderLoanId : \"Not set\");",
+									"",
+									"// Set Next Request",
+									"if(pm.response.to.have.status(200)){",
+									"    pm.execution.setNextRequest(\"assgine_cr_to_cm\");",
+									"}",
+									"else{",
+									"    pm.execution.setNextRequest(null);",
+									"}",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-2d43d80a-85d1-4339-8ed8-08cc8e95eaac",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "device-env",
+								"value": "debug"
+							},
+							{
+								"key": "device-version",
+								"value": "6.10"
+							},
+							{
+								"key": "app-version-code",
+								"value": "510"
+							},
+							{
+								"key": "device-id",
+								"value": "f75419f41629a67f"
+							},
+							{
+								"key": "accept-language",
+								"value": "en"
+							},
+							{
+								"key": "device-udid",
+								"value": ""
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token_lm_app}}"
+							},
+							{
+								"key": "device-type",
+								"value": "**"
+							},
+							{
+								"key": "user-agent",
+								"value": "**"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{requestBody}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/business-app/dsa/v2/cr/{{cr_id}}/loan-detail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business-app",
+								"dsa",
+								"v2",
+								"cr",
+								"{{cr_id}}",
+								"loan-detail"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST -H \"device-env: debug\" -H \"device-version: 6.10\" -H \"app-version-code: 510\" -H \"device-id: f75419f41629a67f\" -H \"accept-language: en\" -H \"device-udid: \" -H \"x-access-token: eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6Mjg4LFwibW9iaWxlXCI6XCI5MDk5OTYxNzk3XCIsXCJlbWFpbFwiOlwia2h1c2hidS5wYXRlbCsxQGluZGlhZ29sZC5jb1wiLFwiY3JlYXRlZEF0XCI6MTY0NTU5MjIxNDI4OCxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJMT0FOX01BTkFHRVJcIixcIlJFTEVBU0VfTUFOQUdFUlwiXX0iLCJpYXQiOjE3NTc0MTk1NTgsImV4cCI6MTc1NzQzMDM1OH0.Laas5qAjxXr5grDI7G2FZ2YzBSzqv_34Vy-sovB1bFJnn_NmZO9cj0G1XKYPyWQJCXUkMUGotQcPU05Ey9Z7pg\" -H \"device-type: **\" -H \"user-agent: **\" --data $'{\"addressDto\":{\"addressLine1\":\"Karol bagh\",\"addressLine2\":\"\",\"city\":\"DELHI\",\"pincode\":\"110001\",\"state\":\"DELHI\"},\"communicationDetailDto\":{\"primaryPhoneNumber\":\"9099961797\"},\"dsaBranchDetailDto\":{\"branchCity\":\"RAJKOT\",\"branchName\":\"RAJKOT BRANCH\",\"ifsc\":\"Ratn0000243\"},\"dsaCrLoanDetailDto\":{\"lenderLan\":\"1234567890644\",\"loanAmount\":250000.0},\"personalDetailDto\":{\"firstName\":\"Khushbu\",\"lastName\":\"PATEL\"}}' --compressed https://fs2.indiagiftsgold.com/business-app/dsa/cr/20561/loan-detail"
+					},
+					"response": []
+				},
+				{
+					"name": "assgine_cr_to_cm",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "10e99264-e602-4fe1-badf-ad599e0095b1",
+								"exec": [
+									"// Verify Status Code",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// === STOP-AT HANDLING ===",
+									"const stopAt = pm.environment.get(\"stop_at\");",
+									"if (stopAt === pm.info.requestName) {",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);",
+									"    pm.execution.setNextRequest(null);",
+									"    return;   // ✅ Prevents retry logic from executing",
+									"}",
+									"",
+									"if (pm.response.code === 200) {",
+									"    pm.execution.setNextRequest(\"get_cr_job_id_from_dashboard\");",
+									"} else {",
+									"    pm.execution.setNextRequest(null);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-7a9f4e5d-214d-44d4-858c-66a2d7460fb5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authority",
+								"value": "dev.indiagiftsgold.com"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"96\", \"Google Chrome\";v=\"96\""
+							},
+							{
+								"key": "device-version",
+								"value": "4.3.6"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json;charset=UTF-8"
+							},
+							{
+								"key": "accept",
+								"value": "*"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"Windows\""
+							},
+							{
+								"key": "origin",
+								"value": "https://dev-dash.bestgoldindia.com"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "cross-site"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "referer",
+								"value": "https://dev-dash.bestgoldindia.com/"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"headers\":{\"x-access-token\":\"{{access_token}}\",\"Content-Type\":\"application-json\"}}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/business/cr/{{cr_id}}/credit-manager",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"business",
+								"cr",
+								"{{cr_id}}",
+								"credit-manager"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_cr_job_id_from_dashboard",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "dee2a549-a6b6-498b-8410-31fa7ab8714e",
+								"exec": [
+									"// Parse response",
+									"let resp = pm.response.json();",
+									"",
+									"// Extract crJobIdOfDsaDetailReviewer safely",
+									"if (resp?.result?.crJobIdOfDsaDetailReviewer) {",
+									"    pm.environment.set(\"cr_job_id_dsa_detail_reviewer\", resp.result.crJobIdOfDsaDetailReviewer);",
+									"    console.log(\"✅ cr_job_id_dsa_detail_reviewer saved:\", resp.result.crJobIdOfDsaDetailReviewer);",
+									"} else {",
+									"    console.warn(\"⚠️ crJobIdOfDsaDetailReviewer not found in response\");",
+									"}",
+									"",
+									"// === STOP-AT HANDLING ===",
+									"const stopAt = pm.environment.get(\"stop_at\");",
+									"if (stopAt === pm.info.requestName) {",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);",
+									"    pm.execution.setNextRequest(null);",
+									"    return;   ",
+									"}",
+									"",
+									"// Set Next Request",
+									"if(pm.response.to.have.status(200)){",
+									"    pm.execution.setNextRequest(\"loan_detail_from_dashboard\");",
+									"}",
+									"else{",
+									"    pm.execution.setNextRequest(null);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-776a0c1c-30c2-4493-baf6-192858088d97",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							},
+							{
+								"key": "cache-control",
+								"value": "no-cache"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "device-version",
+								"value": "12.6.7"
+							},
+							{
+								"key": "ngrok-skip-browser-warning",
+								"value": "69420"
+							},
+							{
+								"key": "origin",
+								"value": "https://fs3-dash.indiagiftsgold.com"
+							},
+							{
+								"key": "pragma",
+								"value": "no-cache"
+							},
+							{
+								"key": "priority",
+								"value": "u=1, i"
+							},
+							{
+								"key": "referer",
+								"value": "https://fs3-dash.indiagiftsgold.com/"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"macOS\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-site"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/business-dashboard/dsa/cr/{{cr_id}}/loan-detail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business-dashboard",
+								"dsa",
+								"cr",
+								"{{cr_id}}",
+								"loan-detail"
+							]
+						},
+						"description": "Generated from cURL: curl 'https://fs6.indiagiftsgold.com/business-dashboard/dsa/cr/21130/loan-detail' \\\n  -H 'accept: application/json, text/plain, */*' \\\n  -H 'accept-language: en-US,en;q=0.9' \\\n  -H 'cache-control: no-cache' \\\n  -H 'device-env: development' \\\n  -H 'device-type: DASHBOARD' \\\n  -H 'device-version: 12.6.7' \\\n  -H 'ngrok-skip-browser-warning: 69420' \\\n  -H 'origin: https://fs3-dash.indiagiftsgold.com' \\\n  -H 'pragma: no-cache' \\\n  -H 'priority: u=1, i' \\\n  -H 'referer: https://fs3-dash.indiagiftsgold.com/' \\\n  -H 'sec-ch-ua: \"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  -H 'sec-fetch-dest: empty' \\\n  -H 'sec-fetch-mode: cors' \\\n  -H 'sec-fetch-site: same-site' \\\n  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36' \\\n  -H 'x-access-token: eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6OTAsXCJtb2JpbGVcIjpudWxsLFwiZW1haWxcIjpcImF0dWwuaW5kaWFnb2xkQGdtYWlsLmNvbVwiLFwiY3JlYXRlZEF0XCI6MTYwMDY2OTM4NTkwMyxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJBRE1JTlwiLFwiQ1NUXCIsXCJDUkVESVRfTUFOQUdFUlwiLFwiTEVWRUwxXCIsXCJDVVNUT01FUl9TVVBQT1JUXCIsXCJTVVBFUl9BRE1JTl9VU0VSXCIsXCJSRUxFQVNFX01BTkFHRVJcIixcIlNDSEVEVUxFUl9URUFNX0xFQURcIixcIkxPQU5fQlVTSU5FU1NfQ0hFQ0tFUl9BRE1JTlwiXX0iLCJpYXQiOjE3NjI4NTYxOTcsImV4cCI6MTc2Mjg2Njk5N30.dOxKasl15BwC7TUPgKa1DnWyDxJQGlELN6gYUERFOOclJ1R1B3qbTwcsxzXSJS-Wv-jFwg_0oj0ExPupvq8ckQ' \\\n  -H 'x-app-signature: eyJraWQiOiJVTjJhMmciLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjEwMzk5NTYxODA3MjU6d2ViOjUxODlhZWViZDUzMzI4ZmVlOTBmYmMiLCJhdWQiOlsicHJvamVjdHMvMTAzOTk1NjE4MDcyNSIsInByb2plY3RzL2xtLWFwcC1kZXYiXSwicHJvdmlkZXIiOiJyZWNhcHRjaGFfdjMiLCJpc3MiOiJodHRwczovL2ZpcmViYXNlYXBwY2hlY2suZ29vZ2xlYXBpcy5jb20vMTAzOTk1NjE4MDcyNSIsImV4cCI6MTc2Mjg1OTc5NCwiaWF0IjoxNzYyODU2MTk0LCJqdGkiOiJWc3ZCVEt5OGlhLUptMjQxWVZ6cThpT3cxZER0ckJIRWZRUS14N3ExazY4In0.evLa1daFoF7iUZkk1UJg4XXbTLyNDPbneHEJPDo_jewfpeOD3YTvTVEU2XEDXXkpiUbc0Eagj_v0zHYDhOxHKu1fkZ66GKSBy6lnuIWaaVsZ3dTFRVIsGGpskpO71Ri929uxUbtEBG5RBNpG9EecJT3Geh8tDOQjsqjMQegREx9jYqUxllw16NFo9HUgXsA8oV12kDhfqiPYBlnm0gY1FwZJk_0ei3NrBxSt9eWm7VsvNgiQtssXFRs6Ck7pC7x2ZRiVDcfMg3MaIJ7vCmIhL8a2eC1V6AyoaYLhIs9GEFk6tL9OCzdH6wyUq0xNLR-_W_v22wj-YdRbeoospkYdWdEuFIJoyowcbEP--lU9Qzo1SktNUKbi5xLSH78uSO0F25LninixQUVio-5t79lcLqB-Ie0nfxVgZf3H5GyzE9IDDdhQqIQ4rXGhBLe56DXlyd9x-RJZqe17atEj7VhKFKwchJmvInYGb10QyG04-ncFhskUlwENiPS4NvAP8X9b'"
+					},
+					"response": []
+				},
+				{
+					"name": "loan_detail_from_dashboard",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "bf549177-160a-4c7f-a400-1fa96d530f4b",
+								"exec": [
+									"const lender_name = pm.environment.get(\"lender_name\");",
+									"",
+									"// Today's date in epoch (milliseconds)",
+									"const todayEpoch = new Date().setHours(0, 0, 0, 0);",
+									"",
+									"// Build final request body in required format & order",
+									"let body = {",
+									"    personalDetailDto: {",
+									"        firstName: \"Atul\",",
+									"        lastName: \"Gupta\"   // Change as needed",
+									"    },",
+									"    communicationDetailDto: {",
+									"        primaryPhoneNumber: pm.environment.get(\"customer_mobile_number\")",
+									"    },",
+									"    addressDto: {",
+									"        addressLine1: \"Karol bagh\",",
+									"        addressLine2: \"\",",
+									"        pincode: 110001,",
+									"        city: \"DELHI\",",
+									"        state: \"DELHI\"",
+									"    },",
+									"    dsaCrLoanDetailDto: {",
+									"        loanAmount: pm.environment.get(\"loan_requested_amount\"),",
+									"        lenderLan: pm.environment.get(\"randomLenderLan\"),",
+									"        loanStartDate: todayEpoch,",
+									"        ltv: 75,",
+									"        roiPerAnnum: 12,",
+									"        processingFee: 2500,",
+									"        scheme: \"Non Agri - (Bullet) - Flat\",",
+									"        tenure: 12  ",
+									"    },",
+									"    dsaBranchDetailDto: {",
+									"        ifsc: pm.environment.get(\"lender_ifsc_code\"),",
+									"        branchName: pm.environment.get(\"BRANCH_NAME\"),",
+									"        branchCity: pm.environment.get(\"BRANCH_CITY\")",
+									"    },",
+									"    crJobIdOfDsaDetailReviewer: pm.environment.get(\"cr_job_id_dsa_detail_reviewer\"),",
+									"    documentTypeEnumList: [",
+									"        \"DSA_LOAN_BOOKING_DOCUMENT\"",
+									"    ]",
+									"};",
+									"",
+									"// Remove branch detail for MAG_FINSERV",
+									"if (lender_name === \"MAG_FINSERV\") {",
+									"    delete body.dsaBranchDetailDto;",
+									"}",
+									"",
+									"pm.variables.set(\"requestBody\", JSON.stringify(body));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "33e80833-09b2-4706-be1c-1d82b09553c9",
+								"exec": [
+									"// Defensive JSON parse",
+									"let res = {};",
+									"try {",
+									"  res = pm.response.json();",
+									"} catch (e) {",
+									"  res = {};",
+									"}",
+									"// Assert HTTP 200 using Chai BDD syntax",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// === STOP-AT HANDLING ===",
+									"const stopAt = pm.environment.get(\"stop_at\");",
+									"if (stopAt === pm.info.requestName) {",
+									"    console.warn(`🛑 Stop-at reached at: ${pm.info.requestName}`);",
+									"    pm.execution.setNextRequest(null);",
+									"    return;   ",
+									"}",
+									"",
+									"// Set Next Request",
+									"if(pm.response.to.have.status(200)){",
+									"    pm.execution.setNextRequest(\"job_status=COMPLETED\");",
+									"}",
+									"else{",
+									"    pm.execution.setNextRequest(null);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-9bbc5de0-4ed9-4f8c-8071-6d8802f152bc",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							},
+							{
+								"key": "cache-control",
+								"value": "no-cache"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "device-version",
+								"value": "12.6.7"
+							},
+							{
+								"key": "ngrok-skip-browser-warning",
+								"value": "69420"
+							},
+							{
+								"key": "origin",
+								"value": "https://fs3-dash.indiagiftsgold.com"
+							},
+							{
+								"key": "pragma",
+								"value": "no-cache"
+							},
+							{
+								"key": "priority",
+								"value": "u=1, i"
+							},
+							{
+								"key": "referer",
+								"value": "https://fs3-dash.indiagiftsgold.com/"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"macOS\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-site"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{requestBody}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/business-dashboard/dsa/cr/{{cr_id}}/loan-detail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business-dashboard",
+								"dsa",
+								"cr",
+								"{{cr_id}}",
+								"loan-detail"
+							]
+						},
+						"description": "Generated from cURL: curl 'https://fs6.indiagiftsgold.com/business-dashboard/dsa/cr/21130/loan-detail' \\\n  -X 'PUT' \\\n  -H 'accept: application/json, text/plain, */*' \\\n  -H 'accept-language: en-US,en;q=0.9' \\\n  -H 'cache-control: no-cache' \\\n  -H 'content-type: application/json' \\\n  -H 'device-env: development' \\\n  -H 'device-type: DASHBOARD' \\\n  -H 'device-version: 12.6.7' \\\n  -H 'ngrok-skip-browser-warning: 69420' \\\n  -H 'origin: https://fs3-dash.indiagiftsgold.com' \\\n  -H 'pragma: no-cache' \\\n  -H 'priority: u=1, i' \\\n  -H 'referer: https://fs3-dash.indiagiftsgold.com/' \\\n  -H 'sec-ch-ua: \"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  -H 'sec-fetch-dest: empty' \\\n  -H 'sec-fetch-mode: cors' \\\n  -H 'sec-fetch-site: same-site' \\\n  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36' \\\n  -H 'x-access-token: eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6OTAsXCJtb2JpbGVcIjpudWxsLFwiZW1haWxcIjpcImF0dWwuaW5kaWFnb2xkQGdtYWlsLmNvbVwiLFwiY3JlYXRlZEF0XCI6MTYwMDY2OTM4NTkwMyxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJBRE1JTlwiLFwiQ1NUXCIsXCJDUkVESVRfTUFOQUdFUlwiLFwiTEVWRUwxXCIsXCJDVVNUT01FUl9TVVBQT1JUXCIsXCJTVVBFUl9BRE1JTl9VU0VSXCIsXCJSRUxFQVNFX01BTkFHRVJcIixcIlNDSEVEVUxFUl9URUFNX0xFQURcIixcIkxPQU5fQlVTSU5FU1NfQ0hFQ0tFUl9BRE1JTlwiXX0iLCJpYXQiOjE3NjI4NTYxOTcsImV4cCI6MTc2Mjg2Njk5N30.dOxKasl15BwC7TUPgKa1DnWyDxJQGlELN6gYUERFOOclJ1R1B3qbTwcsxzXSJS-Wv-jFwg_0oj0ExPupvq8ckQ' \\\n  -H 'x-app-signature: eyJraWQiOiJVTjJhMmciLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjEwMzk5NTYxODA3MjU6d2ViOjUxODlhZWViZDUzMzI4ZmVlOTBmYmMiLCJhdWQiOlsicHJvamVjdHMvMTAzOTk1NjE4MDcyNSIsInByb2plY3RzL2xtLWFwcC1kZXYiXSwicHJvdmlkZXIiOiJyZWNhcHRjaGFfdjMiLCJpc3MiOiJodHRwczovL2ZpcmViYXNlYXBwY2hlY2suZ29vZ2xlYXBpcy5jb20vMTAzOTk1NjE4MDcyNSIsImV4cCI6MTc2Mjg1OTc5NCwiaWF0IjoxNzYyODU2MTk0LCJqdGkiOiJWc3ZCVEt5OGlhLUptMjQxWVZ6cThpT3cxZER0ckJIRWZRUS14N3ExazY4In0.evLa1daFoF7iUZkk1UJg4XXbTLyNDPbneHEJPDo_jewfpeOD3YTvTVEU2XEDXXkpiUbc0Eagj_v0zHYDhOxHKu1fkZ66GKSBy6lnuIWaaVsZ3dTFRVIsGGpskpO71Ri929uxUbtEBG5RBNpG9EecJT3Geh8tDOQjsqjMQegREx9jYqUxllw16NFo9HUgXsA8oV12kDhfqiPYBlnm0gY1FwZJk_0ei3NrBxSt9eWm7VsvNgiQtssXFRs6Ck7pC7x2ZRiVDcfMg3MaIJ7vCmIhL8a2eC1V6AyoaYLhIs9GEFk6tL9OCzdH6wyUq0xNLR-_W_v22wj-YdRbeoospkYdWdEuFIJoyowcbEP--lU9Qzo1SktNUKbi5xLSH78uSO0F25LninixQUVio-5t79lcLqB-Ie0nfxVgZf3H5GyzE9IDDdhQqIQ4rXGhBLe56DXlyd9x-RJZqe17atEj7VhKFKwchJmvInYGb10QyG04-ncFhskUlwENiPS4NvAP8X9b' \\\n  --data-raw '{\"personalDetailDto\":{\"firstName\":\"Atul\",\"lastName\":\"HVVHH\"},\"communicationDetailDto\":{\"primaryPhoneNumber\":\"7275169835\"},\"addressDto\":{\"addressLine1\":\"Karol bagh\",\"addressLine2\":\"\",\"pincode\":110001,\"city\":\"DELHI\",\"state\":\"DELHI\"},\"dsaCrLoanDetailDto\":{\"loanAmount\":250000,\"lenderLan\":\"8090565656\",\"loanStartDate\":1762799400000,\"ltv\":75,\"roiPerAnnum\":12,\"processingFee\":2500,\"scheme\":\"Non Agri - (Bullet) - Flat\",\"tenure\":6},\"dsaBranchDetailDto\":{\"ifsc\":\"RATN0000005\",\"branchName\":\"JAYSINGPUR\",\"branchCity\":\"KOLHAPUR\"},\"crJobIdOfDsaDetailReviewer\":92443,\"documentTypeEnumList\":[\"DSA_LOAN_BOOKING_DOCUMENT\"]}'"
+					},
+					"response": []
+				},
+				{
+					"name": "job_status=COMPLETED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4df4070d-03c8-4bb5-b2d0-8c357d1f2792",
+								"exec": [
+									"// Defensive JSON parse",
+									"let res = {};",
+									"try {",
+									"  res = pm.response.json();",
+									"} catch (e) {",
+									"  res = {};",
+									"}",
+									"// Assert HTTP 200 using Chai BDD syntax",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Flow control: last request (stop the run)",
+									"pm.execution.setNextRequest(null);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17852109-31ebf245-909a-473c-875e-35f3c3e796a0",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							},
+							{
+								"key": "cache-control",
+								"value": "no-cache"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "device-env",
+								"value": "development"
+							},
+							{
+								"key": "device-type",
+								"value": "DASHBOARD"
+							},
+							{
+								"key": "device-version",
+								"value": "12.6.7"
+							},
+							{
+								"key": "ngrok-skip-browser-warning",
+								"value": "69420"
+							},
+							{
+								"key": "origin",
+								"value": "https://fs3-dash.indiagiftsgold.com"
+							},
+							{
+								"key": "pragma",
+								"value": "no-cache"
+							},
+							{
+								"key": "priority",
+								"value": "u=1, i"
+							},
+							{
+								"key": "referer",
+								"value": "https://fs3-dash.indiagiftsgold.com/"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"macOS\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-site"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "x-access-token",
+								"value": "{{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"remark\": \"\",\n    \"status\": \"COMPLETED\",\n    \"remarkEnum\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/business/cr/{{cr_id}}/job/{{cr_job_id_dsa_detail_reviewer}}/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"business",
+								"cr",
+								"{{cr_id}}",
+								"job",
+								"{{cr_job_id_dsa_detail_reviewer}}",
+								"status"
+							]
+						},
+						"description": "Generated from cURL: curl 'https://fs6.indiagiftsgold.com/business/cr/21130/job/92443/status' \\\n  -H 'accept: *' \\\n  -H 'accept-language: en-US,en;q=0.9' \\\n  -H 'cache-control: no-cache' \\\n  -H 'content-type: application/json' \\\n  -H 'device-env: development' \\\n  -H 'device-type: DASHBOARD' \\\n  -H 'device-version: 12.6.7' \\\n  -H 'ngrok-skip-browser-warning: 69420' \\\n  -H 'origin: https://fs3-dash.indiagiftsgold.com' \\\n  -H 'pragma: no-cache' \\\n  -H 'priority: u=1, i' \\\n  -H 'referer: https://fs3-dash.indiagiftsgold.com/' \\\n  -H 'sec-ch-ua: \"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  -H 'sec-fetch-dest: empty' \\\n  -H 'sec-fetch-mode: cors' \\\n  -H 'sec-fetch-site: same-site' \\\n  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36' \\\n  -H 'x-access-token: eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6OTAsXCJtb2JpbGVcIjpudWxsLFwiZW1haWxcIjpcImF0dWwuaW5kaWFnb2xkQGdtYWlsLmNvbVwiLFwiY3JlYXRlZEF0XCI6MTYwMDY2OTM4NTkwMyxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJBRE1JTlwiLFwiQ1NUXCIsXCJDUkVESVRfTUFOQUdFUlwiLFwiTEVWRUwxXCIsXCJDVVNUT01FUl9TVVBQT1JUXCIsXCJTVVBFUl9BRE1JTl9VU0VSXCIsXCJSRUxFQVNFX01BTkFHRVJcIixcIlNDSEVEVUxFUl9URUFNX0xFQURcIixcIkxPQU5fQlVTSU5FU1NfQ0hFQ0tFUl9BRE1JTlwiXX0iLCJpYXQiOjE3NjI4NTYxOTcsImV4cCI6MTc2Mjg2Njk5N30.dOxKasl15BwC7TUPgKa1DnWyDxJQGlELN6gYUERFOOclJ1R1B3qbTwcsxzXSJS-Wv-jFwg_0oj0ExPupvq8ckQ' \\\n  -H 'x-app-signature: eyJraWQiOiJVTjJhMmciLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxOjEwMzk5NTYxODA3MjU6d2ViOjUxODlhZWViZDUzMzI4ZmVlOTBmYmMiLCJhdWQiOlsicHJvamVjdHMvMTAzOTk1NjE4MDcyNSIsInByb2plY3RzL2xtLWFwcC1kZXYiXSwicHJvdmlkZXIiOiJyZWNhcHRjaGFfdjMiLCJpc3MiOiJodHRwczovL2ZpcmViYXNlYXBwY2hlY2suZ29vZ2xlYXBpcy5jb20vMTAzOTk1NjE4MDcyNSIsImV4cCI6MTc2Mjg1OTc5NCwiaWF0IjoxNzYyODU2MTk0LCJqdGkiOiJWc3ZCVEt5OGlhLUptMjQxWVZ6cThpT3cxZER0ckJIRWZRUS14N3ExazY4In0.evLa1daFoF7iUZkk1UJg4XXbTLyNDPbneHEJPDo_jewfpeOD3YTvTVEU2XEDXXkpiUbc0Eagj_v0zHYDhOxHKu1fkZ66GKSBy6lnuIWaaVsZ3dTFRVIsGGpskpO71Ri929uxUbtEBG5RBNpG9EecJT3Geh8tDOQjsqjMQegREx9jYqUxllw16NFo9HUgXsA8oV12kDhfqiPYBlnm0gY1FwZJk_0ei3NrBxSt9eWm7VsvNgiQtssXFRs6Ck7pC7x2ZRiVDcfMg3MaIJ7vCmIhL8a2eC1V6AyoaYLhIs9GEFk6tL9OCzdH6wyUq0xNLR-_W_v22wj-YdRbeoospkYdWdEuFIJoyowcbEP--lU9Qzo1SktNUKbi5xLSH78uSO0F25LninixQUVio-5t79lcLqB-Ie0nfxVgZf3H5GyzE9IDDdhQqIQ4rXGhBLe56DXlyd9x-RJZqe17atEj7VhKFKwchJmvInYGb10QyG04-ncFhskUlwENiPS4NvAP8X9b' \\\n  --data-raw '{\"headers\":{\"x-access-token\":\"eyJhbGciOiJIUzUxMiJ9.eyJEYXRhIjoie1widXNlcklkXCI6OTAsXCJtb2JpbGVcIjpudWxsLFwiZW1haWxcIjpcImF0dWwuaW5kaWFnb2xkQGdtYWlsLmNvbVwiLFwiY3JlYXRlZEF0XCI6MTYwMDY2OTM4NTkwMyxcInVzZXJSb2xlXCI6XCJJTlRFUk5BTF9VU0VSXCIsXCJ1c2VyUm9sZUxpc3RcIjpbXCJBRE1JTlwiLFwiQ1NUXCIsXCJDUkVESVRfTUFOQUdFUlwiLFwiTEVWRUwxXCIsXCJDVVNUT01FUl9TVVBQT1JUXCIsXCJTVVBFUl9BRE1JTl9VU0VSXCIsXCJSRUxFQVNFX01BTkFHRVJcIixcIlNDSEVEVUxFUl9URUFNX0xFQURcIixcIkxPQU5fQlVTSU5FU1NfQ0hFQ0tFUl9BRE1JTlwiXX0iLCJpYXQiOjE3NjI4NTYxOTcsImV4cCI6MTc2Mjg2Njk5N30.dOxKasl15BwC7TUPgKa1DnWyDxJQGlELN6gYUERFOOclJ1R1B3qbTwcsxzXSJS-Wv-jFwg_0oj0ExPupvq8ckQ\",\"Content-Type\":\"application-json\"},\"remark\":\"\",\"status\":\"COMPLETED\",\"remarkEnum\":\"\"}'"
+					},
+					"response": []
+				}
+			],
+			"id": "17852109-632dbbc9-5c15-45ea-9f83-91485a12e563",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "96e7acca-46d0-4e7e-bb3a-6dbba95f21fb",
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e7a92102-7734-45e9-ad62-515c49c1e74e",
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "6dc8d3ce-d726-4b03-919e-9b25dc59035c",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "62f312e5-7c7d-432a-9263-ec9a4a7d1b25",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"// ===== Conditional Common Logging =====",
+					"const printLog = pm.environment.get(\"print_log\");",
+					"",
+					"if (printLog && printLog.toUpperCase() === \"TRUE\") {",
+					"    if (pm.request.body && pm.request.body.raw) {",
+					"        console.log(\"Request Body Sent:\", pm.request.body.raw);",
+					"    } else {",
+					"        console.log(\"Request Body Sent: No body\");",
+					"    }",
+					"",
+					"    console.log(\"Response Status:\", pm.response.code);",
+					"",
+					"    try {",
+					"        const jsonResponse = pm.response.json();",
+					"        console.log(\"Response Body (JSON):\", JSON.stringify(jsonResponse, null, 2));",
+					"        pm.environment.set(\"last_response\", JSON.stringify(jsonResponse));",
+					"    } catch (e) {",
+					"        console.log(\"Response Body (Text):\", pm.response.text());",
+					"        pm.environment.set(\"last_response\", pm.response.text());",
+					"    }",
+					"}",
+					"",
+					"// ===== Stop-At Handling =====",
+					"// const stopAt = pm.environment.get(\"stop_at\");",
+					"",
+					"// if (stopAt === pm.info.requestName) {",
+					"//     console.error(`🛑 Forcing stop at: ${pm.info.requestName}`);",
+					"//     // Fail the test explicitly (shows up as \"Error\" in runner/Newman reports)",
+					"//     pm.test(\"Forced stop-at triggered\", function () {",
+					"//         throw new Error(`Stopped collection at: ${pm.info.requestName}`);",
+					"//     });",
+					"//     // Ensure no further requests are executed",
+					"//     pm.execution.setNextRequest(null);",
+					"// }",
+					""
+				]
+			}
+		}
+	]
+}
